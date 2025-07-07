@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><title>Attendance System</title></head>
+<body>
+  <h2>Mark Attendance</h2>
+  <input id="name" placeholder="Name" />
+  <input id="date" placeholder="YYYY-MM-DD" />
+  <select id="status">
+    <option value="Present">Present</option>
+    <option value="Absent">Absent</option>
+  </select>
+  <button onclick="markAttendance()">Mark</button>
+
+  <h2>View Attendance</h2>
+  <input id="searchName" placeholder="Enter name" />
+  <button onclick="viewAttendance()">View</button>
+  <ul id="attendanceList"></ul>
+
+  <script>
+    async function markAttendance() {
+      const name = document.getElementById('name').value;
+      const date = document.getElementById('date').value;
+      const status = document.getElementById('status').value;
+      await fetch('http://localhost:4000/mark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, date, status })
+      });
+      alert('Attendance marked');
+    }
+
+    async function viewAttendance() {
+      const name = document.getElementById('searchName').value;
+      const res = await fetch(`http://localhost:4000/view/${name}`);
+      const data = await res.json();
+      const list = document.getElementById('attendanceList');
+      list.innerHTML = '';
+      data.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = `${entry.date}: ${entry.status}`;
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
